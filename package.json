@@ -1,0 +1,43 @@
+{
+  "name": "series-data-prototype",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://armintaheri.github.io/series-data-prototype",
+  "main": "src/index.js",
+  "dependencies": {
+    "@cycle/most-run": "8.0.0",
+    "@hocs/with-resize-observer-props": "0.4.1",
+    "@vx/vx": "0.0.159",
+    "d3-array": "1.2.1",
+    "d3-scale": "2.0.0",
+    "d3-scale-chromatic": "1.2.0",
+    "ramda": "^0.25.0",
+    "rc-slider": "8.6.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-motion": "latest",
+    "react-redux": "5.0.7",
+    "react-router-dom": "4.2.2",
+    "react-scripts": "1.1.0",
+    "recompose": "0.26.0",
+    "redux": "3.7.2",
+    "redux-actions": "2.3.0",
+    "redux-cycles": "0.4.1",
+    "redux-logger": "3.0.6",
+    "redux-orm": "0.9.4",
+    "resize-observer-polyfill": "1.5.0",
+    "simplify-js": "1.2.3"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
+}
