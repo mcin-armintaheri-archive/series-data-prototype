@@ -31,7 +31,6 @@ window.seriesCollectionExtent = seriesCollectionExtent;
 // <script>
 var mockData = window.makeSeriesCollection();
 var domain = window.seriesCollectionExtent(mockData);
-console.log(domain);
 window.mountSeriesApp(document.getElementById("root"), {
   domain: domain,
   seriesCollection: mockData

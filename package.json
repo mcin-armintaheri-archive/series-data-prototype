@@ -30,10 +30,18 @@
     "simplify-js": "1.2.3"
   },
   "devDependencies": {
-    "gh-pages": "^1.1.0"
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "^7.7.0",
+    "gh-pages": "^1.1.0",
+    "prettier": "^1.12.1"
   },
   "scripts": {
     "start": "react-scripts start",
+    "lint": "eslint src",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",

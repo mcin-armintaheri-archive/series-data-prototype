@@ -31,12 +31,20 @@ export const editEpochCycle = sources => {
     ({ type }) => type === STOP_EDIT_EPOCH_END
   );
   const editStart = (current, init) => ({
+    seriesId: init.payload.seriesId,
     epochIndex: init.payload.epochIndex,
-    domain: R.sort([init.payload.x, current.payload.x])
+    domain: R.sort([
+      init.payload.domain[0] + current.payload.x - init.payload.x,
+      init.payload.domain[1]
+    ])
   });
   const editEnd = (current, init) => ({
+    seriesId: init.payload.seriesId,
     epochIndex: init.payload.epochIndex,
-    domain: R.sort([current.payload.x, init.payload.x])
+    domain: R.sort([
+      init.payload.domain[0],
+      init.payload.domain[1] + current.payload.x - init.payload.x
+    ])
   });
   const updateEditStart$ = sources.ACTION.filter(
     ({ type }) => type === CONTINUE_EDIT_EPOCH

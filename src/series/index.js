@@ -10,14 +10,13 @@ import { createSeries } from "./state/models/series";
 import { connectSeriesStore } from "./state";
 import EEG from "./components/EEG";
 
-const cycleMiddleware = createCycleMiddleware();
-const { makeStateDriver, makeActionDriver } = cycleMiddleware;
-
-const logger = createLogger();
-
 export default class App extends Component {
   constructor(props) {
     super(props);
+    const cycleMiddleware = createCycleMiddleware();
+    const { makeStateDriver, makeActionDriver } = cycleMiddleware;
+    const logger = createLogger();
+
     this.store = createStore(reducer, applyMiddleware(cycleMiddleware, logger));
     this.store.dispatch(setDomain(props.initialDomain));
     props.initialSeriesCollection.forEach(series => {

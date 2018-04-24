@@ -1,13 +1,14 @@
+import * as R from "ramda";
 import React from "react";
 import { Group } from "@vx/vx";
+import { getPosition } from "../util/pointer";
 
 const Epoch = ({
   epochTags,
-  seriesId,
-  epochIndex,
-  start,
-  end,
+  domain,
+  tag,
   height,
+  y,
   xScale,
   initEditEpochStart,
   initEditEpochEnd,
@@ -15,29 +16,36 @@ const Epoch = ({
   stopEditEpochStart,
   stopEditEpochEnd
 }) => {
-  return null;
-  const rect1Props = {
-    x: 0,
-    width: 0,
-    height
-  };
-  const rect2Props = {
-    x: 0,
-    width: 0,
-    height
-  };
-  const rect3Props = {
-    x: 0,
-    width: 50,
+  const [x0, x1] = domain.map(xScale);
+  const mid = (x0 + x1) / 2;
+  const rectStartProps = {
+    x: x0,
+    width: mid - x0,
+    height,
     fill: "orange",
-    opacity: 0.05,
-    height
+    opacity: 0.3,
+    onMouseDown: R.compose(
+      initEditEpochStart,
+      xScale.invert,
+      R.prop("clientX")
+    ),
+    onMouseMove: R.compose(continueEpoch, xScale.invert, R.prop("clientX")),
+    onMouseUp: stopEditEpochStart
+  };
+  const rectEndProps = {
+    x: mid - 0.1,
+    width: x1 - mid,
+    height,
+    fill: "orange",
+    opacity: 0.3,
+    onMouseDown: R.compose(initEditEpochEnd, xScale.invert, R.prop("clientX")),
+    onMouseMove: R.compose(continueEpoch, xScale.invert, R.prop("clientX")),
+    onMouseUp: stopEditEpochEnd
   };
   return (
     <Group height={height}>
-      <rect {...rect1Props} />
-      <rect {...rect2Props} />
-      <rect {...rect3Props} />
+      <rect {...rectStartProps} />
+      <rect {...rectEndProps} />
     </Group>
   );
 };

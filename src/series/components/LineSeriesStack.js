@@ -27,6 +27,20 @@ const LineSeriesStack = ({ x, y, renderSeries, ...seriesStackAxesProps }) => (
     x={x}
     y={y}
     renderSeries={props => <LineSeries x={x} y={y} {...props} />}
+    tooltipFormatX={x => x.toFixed(3)}
+    tooltipFormatY={(y, index) => (
+      <span>
+        <div
+          style={{
+            display: "inline-block",
+            width: "10px",
+            height: "10px",
+            backgroundColor: palette(index)
+          }}
+        />
+        &nbsp;{y.toFixed(3)}
+      </span>
+    )}
     {...seriesStackAxesProps}
   />
 );

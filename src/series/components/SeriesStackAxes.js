@@ -5,6 +5,7 @@ import { AxisBottom, AxisTop, AxisLeft, withTooltip, Tooltip } from "@vx/vx";
 import { getPosition } from "../util/pointer";
 import {} from "../state";
 import Epoch from "./Epoch";
+import "./styles.css";
 
 const Border = ({ top, left, right, bottom, width, height, fill }) => {
   return (
@@ -69,7 +70,7 @@ const SeriesStackAxes = ({
   tickFormatX = x => x,
   tickFormatY = y => y
 }) => {
-  if (seriesCollection.length === 0) {
+  if (seriesCollection.length === 1) {
     return null;
   }
   const numRows = seriesCollection.length;
@@ -103,15 +104,21 @@ const SeriesStackAxes = ({
       hideTooltip();
     }
   };
-  const computeRowScale = index =>
-    yScale
+  const computeRowScale = (index, zoom = 1) => {
+    const yDomain = yScale.copy().domain();
+    const mid = (yDomain[0] + yDomain[1]) / 2;
+    yDomain[0] = (yDomain[0] - mid) / zoom + mid;
+    yDomain[1] = (yDomain[1] - mid) / zoom + mid;
+    return yScale
       .copy()
+      .domain(yDomain)
       .rangeRound([
         (index + 1) * rowHeight - signalPadding,
         index * rowHeight + signalPadding
       ]);
-  const leftAxes = seriesCollection.map((_, i) => {
-    const scale = computeRowScale(i);
+  };
+  const leftAxes = seriesCollection.map((series, i) => {
+    const scale = computeRowScale(i, series.zoom);
     const domain = scale.domain();
     const tickFormat = tick =>
       tick === domain[0] || tick === domain[1]
@@ -128,25 +135,34 @@ const SeriesStackAxes = ({
     );
   });
   const epochs = seriesCollection.map((series, i) => {
-    const handlers = {
-      initEditEpochStart,
-      initEditEpochEnd,
-      continueEpoch,
-      stopEditEpochStart,
-      stopEditEpochEnd
-    };
     return (
-      <Group y={rowHeight * i} height={rowHeight} width={plotWidth}>
-        {series.epochs.map((epoch, j) => (
+      <Group top={rowHeight * i} height={rowHeight} width={plotWidth}>
+        {series.epochs.map(({ domain, tag }, j) => (
           <Epoch
             epochTags={epochTags}
-            seriesId={series.id}
-            epochIndex={j}
-            start={epoch[0]}
-            end={epoch[1]}
+            domain={domain}
+            tag={tag}
             height={rowHeight}
             xScale={xScale}
-            {...handlers}
+            initEditEpochStart={x =>
+              initEditEpochStart({
+                seriesId: series.id,
+                epochIndex: j,
+                domain,
+                x
+              })
+            }
+            initEditEpochEnd={x =>
+              initEditEpochEnd({
+                seriesId: series.id,
+                epochIndex: j,
+                domain,
+                x
+              })
+            }
+            continueEpoch={x => continueEpoch({ x })}
+            stopEditEpochStart={() => stopEditEpochStart()}
+            stopEditEpochEnd={() => stopEditEpochEnd()}
           />
         ))}
       </Group>
@@ -156,7 +172,7 @@ const SeriesStackAxes = ({
     if (!renderSeries) {
       return null;
     }
-    const rowScale = computeRowScale(i);
+    const rowScale = computeRowScale(i, series.zoom);
     const range = rowScale.range();
     const y = Math.min(...range);
     const Component = renderSeries;
@@ -204,7 +220,9 @@ const SeriesStackAxes = ({
       left={xScale(tooltipLeft) + innerGroupProps.left + 12}
     >
       <ul style={{ listStyleType: "none", margin: "0", padding: "0" }}>
-        {traces.map(trace => trace && <li>{tooltipFormatY(y(trace))}</li>)}
+        {traces.map(
+          (trace, j) => trace && <li>{tooltipFormatY(y(trace), j)}</li>
+        )}
       </ul>
     </SeriesToolTip>
   );
@@ -215,10 +233,8 @@ const SeriesStackAxes = ({
       onMouseMove={onMouseMove}
     >
       <svg width={width} height={height}>
-        <Group {...innerGroupProps}>
-   	  {signalGeometry}
-	  {epochs}
-	</Group>
+        <Group {...innerGroupProps}>{signalGeometry}</Group>
+        <Group {...innerGroupProps}>{epochs}</Group>
         <Border width={width} height={height} fill={borderFill} {...margin} />
         <Group {...innerGroupProps}>
           <AxisTop

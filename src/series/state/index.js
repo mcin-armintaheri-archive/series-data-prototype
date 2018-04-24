@@ -7,7 +7,7 @@ import { createReducer, createSelector } from "redux-orm";
 // Reducers
 import { toolsReducer, setTool } from "./parameters/tools";
 import { domainReducer, setDomain } from "./parameters/domain";
-import { setEpochDomain } from "./models/series";
+import { setEpochDomain, setZoom } from "./models/series";
 
 // Cycles
 import {
@@ -43,6 +43,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  setZoom: R.compose(dispatch, setZoom),
   onDomainChange: R.compose(dispatch, setDomain),
   onEpochChange: R.compose(dispatch, setEpochDomain),
   initEditEpochStart: R.compose(dispatch, initEditEpochStart),
