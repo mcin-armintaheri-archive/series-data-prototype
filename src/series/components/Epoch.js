@@ -12,9 +12,7 @@ const Epoch = ({
   xScale,
   initEditEpochStart,
   initEditEpochEnd,
-  continueEpoch,
-  stopEditEpochStart,
-  stopEditEpochEnd
+  continueEditEpoch
 }) => {
   const [x0, x1] = domain.map(xScale);
   const mid = (x0 + x1) / 2;
@@ -29,8 +27,7 @@ const Epoch = ({
       xScale.invert,
       R.prop("clientX")
     ),
-    onMouseMove: R.compose(continueEpoch, xScale.invert, R.prop("clientX")),
-    onMouseUp: stopEditEpochStart
+    onMouseMove: R.compose(continueEditEpoch, xScale.invert, R.prop("clientX"))
   };
   const rectEndProps = {
     x: mid - 0.1,
@@ -39,8 +36,7 @@ const Epoch = ({
     fill: "orange",
     opacity: 0.3,
     onMouseDown: R.compose(initEditEpochEnd, xScale.invert, R.prop("clientX")),
-    onMouseMove: R.compose(continueEpoch, xScale.invert, R.prop("clientX")),
-    onMouseUp: stopEditEpochEnd
+    onMouseMove: R.compose(continueEditEpoch, xScale.invert, R.prop("clientX"))
   };
   return (
     <Group height={height}>

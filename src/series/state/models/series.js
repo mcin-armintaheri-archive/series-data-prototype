@@ -30,7 +30,9 @@ export class Series extends Model {
         if (!Series.hasId(seriesId)) {
           return;
         }
-        Series.withId(seriesId).epochs[epochIndex] = domain;
+        const { epochs } = Series.withId(seriesId);
+        epochs[epochIndex].domain = domain;
+        Series.withId(seriesId).update({ epochs });
         return;
       }
       case SET_TRACES: {

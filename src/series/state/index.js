@@ -14,8 +14,7 @@ import {
   initEditEpochStart,
   initEditEpochEnd,
   continueEditEpoch,
-  stopEditEpochStart,
-  stopEditEpochEnd,
+  stopEditEpoch,
   editEpochCycle
 } from "./cycles/edit-epoch";
 
@@ -48,9 +47,8 @@ const mapDispatchToProps = dispatch => ({
   onEpochChange: R.compose(dispatch, setEpochDomain),
   initEditEpochStart: R.compose(dispatch, initEditEpochStart),
   initEditEpochEnd: R.compose(dispatch, initEditEpochEnd),
-  continueEpoch: R.compose(dispatch, continueEditEpoch),
-  stopEditEpochStart: R.compose(dispatch, stopEditEpochStart),
-  stopEditEpochEnd: R.compose(dispatch, stopEditEpochEnd)
+  continueEditEpoch: R.compose(dispatch, continueEditEpoch),
+  stopEditEpoch: R.compose(dispatch, stopEditEpoch)
 });
 
 export const connectSeriesStore = connect(mapStateToProps, mapDispatchToProps);

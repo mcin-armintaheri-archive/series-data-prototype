@@ -1,3 +1,4 @@
+import * as R from "ramda";
 import React, { Fragment } from "react";
 import { bisector } from "d3-array";
 import { Group, Line } from "@vx/vx";
@@ -55,9 +56,8 @@ const SeriesStackAxes = ({
   renderSeries,
   initEditEpochStart,
   initEditEpochEnd,
-  continueEpoch,
-  stopEditEpochStart,
-  stopEditEpochEnd,
+  continueEditEpoch,
+  stopEditEpoch,
   showTooltip,
   updateTooltip,
   hideTooltip,
@@ -160,9 +160,7 @@ const SeriesStackAxes = ({
                 x
               })
             }
-            continueEpoch={x => continueEpoch({ x })}
-            stopEditEpochStart={() => stopEditEpochStart()}
-            stopEditEpochEnd={() => stopEditEpochEnd()}
+            continueEditEpoch={x => continueEditEpoch({ x })}
           />
         ))}
       </Group>
@@ -229,6 +227,10 @@ const SeriesStackAxes = ({
   return (
     <div
       style={{ position: "relative" }}
+      onMouseUp={event => {
+        event.stopPropagation();
+        stopEditEpoch();
+      }}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
     >

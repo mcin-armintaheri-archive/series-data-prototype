@@ -33,7 +33,11 @@ const EEG = ({
   const totalDomainExtent = extent(seriesCollection, x);
   return (
     <div style={styles}>
-      <div style={{ margin: "30px 30px" }}>
+      <div
+        style={{
+          margin: `30px ${margin.right}px 30px ${150 + margin.left}px`
+        }}
+      >
         <Range
           value={domain}
           onChange={onDomainChange}
