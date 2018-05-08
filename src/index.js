@@ -4,6 +4,7 @@ import extent from "./series/util/extent.js";
 import { makeSeriesCollection } from "./series/mockdata";
 import SeriesApp from "./series";
 import "rc-slider/assets/index.css";
+import "./css/bootstrap.min.css";
 
 export { makeSeriesCollection } from "./series/mockdata";
 
