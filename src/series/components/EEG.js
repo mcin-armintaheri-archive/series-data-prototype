@@ -4,7 +4,10 @@ import { ParentSize } from "@vx/vx";
 import { Range } from "rc-slider";
 import LineSeriesStack from "./LineSeriesStack";
 import MultiplierPanel from "./MultiplierPanel";
+import EditableText from "./EditableText";
+import Toolbar from "./Toolbar";
 import extent from "../util/extent.js";
+import { Tools } from "../state/parameters/tools";
 
 const styles = {
   fontFamily: "sans-serif",
@@ -28,14 +31,22 @@ const EEG = ({
     right: 50,
     bottom: 30
   },
+  panelWidth = 150,
+  activeTool = Tools.NONE,
+  setTool,
   ...seriesStackProps
 }) => {
   const totalDomainExtent = extent(seriesCollection, x);
   return (
     <div style={styles}>
+      <Toolbar
+        style={{ margin: "10px 10px" }}
+        activeTool={activeTool}
+        setTool={setTool}
+      />
       <div
         style={{
-          margin: `30px ${margin.right}px 30px ${150 + margin.left}px`
+          margin: `30px ${margin.right}px 30px ${panelWidth + margin.left}px`
         }}
       >
         <Range
@@ -63,13 +74,20 @@ const EEG = ({
           }}
         >
           {seriesCollection.map(series => (
-            <MultiplierPanel
-              onChange={zoom => setZoom({ seriesId: series.id, zoom })}
-              label={series.name}
-              multiplierLabel="zoom"
-              multiplier={series.zoom}
-              factor={zoomFactor}
-            />
+            <div style={{ minWidth: `${panelWidth}px` }}>
+              <EditableText
+                value={series.name}
+                onSubmit={value => {
+                  console.log({ name: value });
+                }}
+              />
+              <MultiplierPanel
+                multiplierLabel="zoom"
+                multiplier={series.zoom}
+                factor={zoomFactor}
+                onChange={zoom => setZoom({ seriesId: series.id, zoom })}
+              />
+            </div>
           ))}
         </div>
         <div style={{ width: "100%", height: "100%" }}>
@@ -85,6 +103,7 @@ const EEG = ({
                   yScale={scaleLinear().domain(yScale)}
                   seriesCollection={seriesCollection}
                   margin={margin}
+                  activeTool={activeTool}
                   {...seriesStackProps}
                 />
               )}

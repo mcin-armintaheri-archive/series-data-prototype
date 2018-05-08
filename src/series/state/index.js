@@ -2,12 +2,19 @@ import * as R from "ramda";
 import { connect } from "react-redux";
 import { combineReducers } from "redux";
 import { combineCycles } from "redux-cycles";
-import { createReducer, createSelector } from "redux-orm";
+import { createReducer } from "redux-orm";
 
 // Reducers
 import { toolsReducer, setTool } from "./parameters/tools";
+import { tagsReducer, setTag } from "./parameters/tags";
 import { domainReducer, setDomain } from "./parameters/domain";
-import { setEpochDomain, setZoom } from "./models/series";
+import {
+  createEpoch,
+  removeEpoch,
+  setEpochDomain,
+  setZoom
+} from "./models/series";
+import { seriesSelector } from "./models/orm";
 
 // Cycles
 import {
@@ -15,29 +22,24 @@ import {
   initEditEpochEnd,
   continueEditEpoch,
   stopEditEpoch,
+  createEpochCycle,
   editEpochCycle
 } from "./cycles/edit-epoch";
 
 import orm from "./models/orm";
 
-export const cycle = combineCycles(editEpochCycle);
+export const cycle = combineCycles(createEpochCycle, editEpochCycle);
 
 export const reducer = combineReducers({
   domain: domainReducer,
   activeTool: toolsReducer,
+  activeTag: tagsReducer,
   entities: createReducer(orm)
 });
 
-const entitiesSelector = state => state.entities;
-
-export const seriesSelector = createSelector(orm, entitiesSelector, session =>
-  session.Series.all()
-    .toModelArray()
-    .map(series => R.merge({ epochs: series.epochs.toRefArray }, series.ref))
-);
-
 const mapStateToProps = state => ({
   domain: state.domain,
+  activeTool: state.activeTool,
   seriesCollection: seriesSelector(state)
 });
 
@@ -48,7 +50,11 @@ const mapDispatchToProps = dispatch => ({
   initEditEpochStart: R.compose(dispatch, initEditEpochStart),
   initEditEpochEnd: R.compose(dispatch, initEditEpochEnd),
   continueEditEpoch: R.compose(dispatch, continueEditEpoch),
-  stopEditEpoch: R.compose(dispatch, stopEditEpoch)
+  stopEditEpoch: R.compose(dispatch, stopEditEpoch),
+  createEpoch: R.compose(dispatch, createEpoch),
+  removeEpoch: R.compose(dispatch, removeEpoch),
+  setTool: R.compose(dispatch, setTool),
+  setTag: R.compose(dispatch, setTag)
 });
 
 export const connectSeriesStore = connect(mapStateToProps, mapDispatchToProps);

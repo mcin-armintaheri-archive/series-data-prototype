@@ -1,7 +1,6 @@
 import * as R from "ramda";
 import React from "react";
 import { Group } from "@vx/vx";
-import { getPosition } from "../util/pointer";
 
 const Epoch = ({
   epochTags,
@@ -10,9 +9,10 @@ const Epoch = ({
   height,
   y,
   xScale,
-  initEditEpochStart,
-  initEditEpochEnd,
-  continueEditEpoch
+  onSelect = () => {},
+  initEditEpochStart = () => {},
+  initEditEpochEnd = () => {},
+  continueEditEpoch = () => {}
 }) => {
   const [x0, x1] = domain.map(xScale);
   const mid = (x0 + x1) / 2;
@@ -40,8 +40,8 @@ const Epoch = ({
   };
   return (
     <Group height={height}>
-      <rect {...rectStartProps} />
-      <rect {...rectEndProps} />
+      <rect {...rectStartProps} onClick={onSelect} />
+      <rect {...rectEndProps} onClick={onSelect} />
     </Group>
   );
 };

@@ -4,7 +4,7 @@ import { bisector } from "d3-array";
 import { Group, Line } from "@vx/vx";
 import { AxisBottom, AxisTop, AxisLeft, withTooltip, Tooltip } from "@vx/vx";
 import { getPosition } from "../util/pointer";
-import {} from "../state";
+import { Tools } from "../state/parameters/tools";
 import Epoch from "./Epoch";
 import "./styles.css";
 
@@ -58,6 +58,10 @@ const SeriesStackAxes = ({
   initEditEpochEnd,
   continueEditEpoch,
   stopEditEpoch,
+  activeTool,
+  activeTag,
+  createEpoch,
+  removeEpoch,
   showTooltip,
   updateTooltip,
   hideTooltip,
@@ -89,7 +93,17 @@ const SeriesStackAxes = ({
     const tooltipTop = yScale.invert(position.y % rowHeight);
     const bisect = bisector(x).left;
     const tooltipData = seriesCollection.map(series =>
-      series.traces.map(trace => trace[bisect(trace, tooltipLeft, 1)])
+      series.traces.map(trace => {
+        const i = bisect(trace, tooltipLeft, 1);
+        const p0 = trace[i];
+        const p1 = trace[i + 1] || p0;
+        const xp = tooltipLeft;
+        const x0 = x(p0);
+        const x1 = x(p1);
+        const t = (xp - x0) / (x1 - x0);
+        const yp = y(p0) * (1 - t) + y(p1) * t;
+        return { x: xp, y: yp };
+      })
     );
     return { tooltipData, tooltipLeft, tooltipTop };
   };
@@ -134,7 +148,30 @@ const SeriesStackAxes = ({
       />
     );
   });
+  const eventRects = seriesCollection.map((series, i) => {
+    const whenAdding = R.when(() => activeTool === Tools.ADD_EPOCH);
+    const onMouseDown = event => {
+      const position = getPosition(event);
+      const x0 = xScale.invert(position.x);
+      const x1 = xScale.invert(position.x + 30);
+      const domain = [x0, x1];
+      createEpoch({ seriesId: series.id, domain, tag: activeTag, x: x1 });
+    };
+    return (
+      <Group top={rowHeight * i} height={rowHeight} width={plotWidth}>
+        <rect
+          onMouseDown={whenAdding(onMouseDown)}
+          height={rowHeight}
+          width={plotWidth}
+          opacity={0}
+          fill="red"
+        />
+      </Group>
+    );
+  });
   const epochs = seriesCollection.map((series, i) => {
+    const whenEditing = R.when(() => activeTool === Tools.EDIT_EPOCH);
+    const whenRemoving = R.when(() => activeTool === Tools.REMOVE_EPOCH);
     return (
       <Group top={rowHeight * i} height={rowHeight} width={plotWidth}>
         {series.epochs.map(({ domain, tag }, j) => (
@@ -144,22 +181,26 @@ const SeriesStackAxes = ({
             tag={tag}
             height={rowHeight}
             xScale={xScale}
-            initEditEpochStart={x =>
+            onSelect={whenRemoving(() => {
+              console.log(j);
+              removeEpoch({ seriesId: series.id, epochIndex: j });
+            })}
+            initEditEpochStart={whenEditing(x =>
               initEditEpochStart({
                 seriesId: series.id,
                 epochIndex: j,
                 domain,
                 x
               })
-            }
-            initEditEpochEnd={x =>
+            )}
+            initEditEpochEnd={whenEditing(x =>
               initEditEpochEnd({
                 seriesId: series.id,
                 epochIndex: j,
                 domain,
                 x
               })
-            }
+            )}
             continueEditEpoch={x => continueEditEpoch({ x })}
           />
         ))}
@@ -219,7 +260,7 @@ const SeriesStackAxes = ({
     >
       <ul style={{ listStyleType: "none", margin: "0", padding: "0" }}>
         {traces.map(
-          (trace, j) => trace && <li>{tooltipFormatY(y(trace), j)}</li>
+          (trace, j) => trace && <li>{tooltipFormatY(trace.y, j)}</li>
         )}
       </ul>
     </SeriesToolTip>
@@ -236,6 +277,7 @@ const SeriesStackAxes = ({
     >
       <svg width={width} height={height}>
         <Group {...innerGroupProps}>{signalGeometry}</Group>
+        <Group {...innerGroupProps}>{eventRects}</Group>
         <Group {...innerGroupProps}>{epochs}</Group>
         <Border width={width} height={height} fill={borderFill} {...margin} />
         <Group {...innerGroupProps}>

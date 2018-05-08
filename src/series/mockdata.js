@@ -16,7 +16,7 @@ export const makeRandomTraces = (numSamples, numSuperpositions) =>
 
 export const makeRandomSeries = (numSamples, numSuperpositions) => (_, i) => ({
   zoom: 1,
-  name: "Channel - " + i,
+  name: "Signal - " + i,
   traces: makeRandomTraces(numSamples, numSuperpositions),
   epochs: [{ tag: 0, domain: [30, 50] }, { tag: 1, domain: [100, 150] }]
 });

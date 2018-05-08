@@ -1,7 +1,7 @@
-import * as most from "most";
 import * as R from "ramda";
 import { createAction } from "redux-actions";
-import { setEpochDomain } from "../models/series";
+import { CREATE_EPOCH, setEpochDomain } from "../models/series";
+import { seriesSelector } from "../models/orm";
 
 export const INIT_EDIT_EPOCH_START = "INIT_EDIT_EPOCH_START";
 export const initEditEpochStart = createAction(INIT_EDIT_EPOCH_START);
@@ -59,12 +59,32 @@ export const editEpochCycle = sources => {
       .takeUntil(stopEdit$)
   );
   const action$ = editStart$.merge(editEnd$);
-  editStart$.observe(x => console.log(111, x));
   return {
     ACTION: action$
   };
 };
 
-export const addRemoveEpochCycle = sources => {
-  return {};
+const addThenEdit = (created, series) => {
+  const target = series.find(s => s.id === created.payload.seriesId);
+  if (!target) {
+    return { type: null };
+  }
+  const epochIndex = target.epochs.length;
+  return initEditEpochEnd({
+    seriesId: target.id,
+    epochIndex,
+    domain: created.domain,
+    x: created.payload.x
+  });
+};
+
+export const createEpochCycle = sources => {
+  const series$ = sources.STATE.map(seriesSelector);
+  const createEpoch$ = sources.ACTION.filter(
+    ({ type }) => type === CREATE_EPOCH
+  );
+  const initEdit$ = createEpoch$.combine(addThenEdit, series$);
+  return {
+    ACTION: initEdit$
+  };
 };

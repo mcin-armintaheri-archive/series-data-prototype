@@ -8,8 +8,7 @@ const MultiplierPanel = ({
   factor
 }) => {
   return (
-    <div style={{ minWidth: "150px" }}>
-      <div>{label}</div>
+    <div style={{ width: "100%" }}>
       <div
         style={{
           display: "flex",
