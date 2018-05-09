@@ -60,6 +60,7 @@ const SeriesStackAxes = ({
   stopEditEpoch,
   activeTool,
   activeTag,
+  tagColors = [],
   createEpoch,
   removeEpoch,
   showTooltip,
@@ -94,13 +95,13 @@ const SeriesStackAxes = ({
     const bisect = bisector(x).left;
     const tooltipData = seriesCollection.map(series =>
       series.traces.map(trace => {
-        const i = bisect(trace, tooltipLeft, 1);
-        const p0 = trace[i];
-        const p1 = trace[i + 1] || p0;
+        const i = bisect(trace, tooltipLeft);
+        const p1 = trace[i];
+        const p0 = trace[i - 1] || p1;
         const xp = tooltipLeft;
         const x0 = x(p0);
         const x1 = x(p1);
-        const t = (xp - x0) / (x1 - x0);
+        const t = Math.abs((xp - x0) / (x1 - x0));
         const yp = y(p0) * (1 - t) + y(p1) * t;
         return { x: xp, y: yp };
       })
@@ -179,6 +180,7 @@ const SeriesStackAxes = ({
             epochTags={epochTags}
             domain={domain}
             tag={tag}
+            colors={tagColors}
             height={rowHeight}
             xScale={xScale}
             onSelect={whenRemoving(() => {

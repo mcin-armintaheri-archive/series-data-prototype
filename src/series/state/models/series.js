@@ -14,14 +14,14 @@ export const createEpoch = createAction(CREATE_EPOCH);
 export const REMOVE_EPOCH = "REMOVE_EPOCH";
 export const removeEpoch = createAction(REMOVE_EPOCH);
 
-export const SET_NAME = "SET_NAME";
-export const setName = createAction(SET_NAME);
-
 export const SET_TRACES = "SET_TRACES";
 export const setTraces = createAction(SET_TRACES);
 
 export const SET_ZOOM = "SET_ZOOM";
 export const setZoom = createAction(SET_ZOOM);
+
+export const SET_NAME = "SET_NAME";
+export const setName = createAction(SET_NAME);
 
 export class Series extends Model {
   static reducer(action, Series) {
@@ -71,7 +71,7 @@ export class Series extends Model {
       }
       case SET_NAME: {
         const { seriesId, name } = payload;
-        Series.withid(seriesId).update({ name });
+        Series.withId(seriesId).update({ name });
         return;
       }
       case SET_TRACES: {
@@ -79,7 +79,7 @@ export class Series extends Model {
         if (!(traces instanceof Array)) {
           return;
         }
-        Series.withid(seriesId).update({ traces });
+        Series.withId(seriesId).update({ traces });
         return;
       }
       case SET_ZOOM: {

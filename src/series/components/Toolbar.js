@@ -2,19 +2,22 @@ import React from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { Tools, ToolInfo } from "../state/parameters/tools";
 
-const Toolbar = ({ activeTool, setTool, onSave, onLoad, style }) => {
+const Toolbar = ({ activeTool, setTool, onSave, onLoad, style, children }) => {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", ...style }}>
-      <ButtonGroup>
-        {Object.keys(Tools).map(tool => (
-          <Button
-            bsStyle={`${tool === activeTool ? "primary" : "default"}`}
-            onClick={() => setTool(tool)}
-          >
-            {ToolInfo[tool].name}
-          </Button>
-        ))}
-      </ButtonGroup>
+      <div>
+        <ButtonGroup>
+          {Object.keys(Tools).map(tool => (
+            <Button
+              bsStyle={`${tool === activeTool ? "primary" : "default"}`}
+              onClick={() => setTool(tool)}
+            >
+              {ToolInfo[tool].name}
+            </Button>
+          ))}
+        </ButtonGroup>
+        <div>{children}</div>
+      </div>
       <ButtonGroup>
         <Button
           disabled={!onSave}

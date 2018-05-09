@@ -6,6 +6,7 @@ const Epoch = ({
   epochTags,
   domain,
   tag,
+  colors,
   height,
   y,
   xScale,
@@ -16,12 +17,13 @@ const Epoch = ({
 }) => {
   const [x0, x1] = domain.map(xScale);
   const mid = (x0 + x1) / 2;
+  const tagColor = colors.find(c => c.tag === tag) || "gray";
   const rectStartProps = {
     x: x0,
     width: mid - x0,
     height,
-    fill: "orange",
-    opacity: 0.3,
+    fill: tagColor.color,
+    opacity: 0.4,
     onMouseDown: R.compose(
       initEditEpochStart,
       xScale.invert,
@@ -33,8 +35,8 @@ const Epoch = ({
     x: mid - 0.1,
     width: x1 - mid,
     height,
-    fill: "orange",
-    opacity: 0.3,
+    fill: tagColor.color,
+    opacity: 0.4,
     onMouseDown: R.compose(initEditEpochEnd, xScale.invert, R.prop("clientX")),
     onMouseMove: R.compose(continueEditEpoch, xScale.invert, R.prop("clientX"))
   };

@@ -12,7 +12,8 @@ import {
   createEpoch,
   removeEpoch,
   setEpochDomain,
-  setZoom
+  setZoom,
+  setName
 } from "./models/series";
 import { seriesSelector } from "./models/orm";
 
@@ -22,13 +23,12 @@ import {
   initEditEpochEnd,
   continueEditEpoch,
   stopEditEpoch,
-  createEpochCycle,
   editEpochCycle
 } from "./cycles/edit-epoch";
 
 import orm from "./models/orm";
 
-export const cycle = combineCycles(createEpochCycle, editEpochCycle);
+export const cycle = combineCycles(editEpochCycle);
 
 export const reducer = combineReducers({
   domain: domainReducer,
@@ -40,11 +40,13 @@ export const reducer = combineReducers({
 const mapStateToProps = state => ({
   domain: state.domain,
   activeTool: state.activeTool,
+  activeTag: state.activeTag,
   seriesCollection: seriesSelector(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   setZoom: R.compose(dispatch, setZoom),
+  setName: R.compose(dispatch, setName),
   onDomainChange: R.compose(dispatch, setDomain),
   onEpochChange: R.compose(dispatch, setEpochDomain),
   initEditEpochStart: R.compose(dispatch, initEditEpochStart),

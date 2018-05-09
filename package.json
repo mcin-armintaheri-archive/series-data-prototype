@@ -7,6 +7,9 @@
   "main": "src/index.js",
   "dependencies": {
     "@cycle/most-run": "8.0.0",
+    "@fortawesome/fontawesome": "^1.1.7",
+    "@fortawesome/fontawesome-free-solid": "^5.0.12",
+    "@fortawesome/react-fontawesome": "0.0.19",
     "@hocs/with-resize-observer-props": "0.4.1",
     "@vx/vx": "0.0.159",
     "d3-array": "1.2.1",

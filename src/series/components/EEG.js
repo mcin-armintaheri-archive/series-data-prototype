@@ -1,5 +1,8 @@
+import * as R from "ramda";
 import React from "react";
-import { scaleLinear } from "d3-scale";
+import { Button } from "react-bootstrap";
+import { scaleOrdinal, scaleLinear } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import { ParentSize } from "@vx/vx";
 import { Range } from "rc-slider";
 import LineSeriesStack from "./LineSeriesStack";
@@ -8,6 +11,14 @@ import EditableText from "./EditableText";
 import Toolbar from "./Toolbar";
 import extent from "../util/extent.js";
 import { Tools } from "../state/parameters/tools";
+
+const palette = scaleOrdinal(schemeCategory10);
+const tagColors = R.reverse(R.range(0, 10)).map((c, i) => {
+  return {
+    tag: i,
+    color: palette(c)
+  };
+});
 
 const styles = {
   fontFamily: "sans-serif",
@@ -34,16 +45,37 @@ const EEG = ({
   panelWidth = 150,
   activeTool = Tools.NONE,
   setTool,
+  activeTag = 0,
+  setTag,
+  setName,
   ...seriesStackProps
 }) => {
   const totalDomainExtent = extent(seriesCollection, x);
+  const addEpochIsActive = activeTool === Tools.ADD_EPOCH;
   return (
     <div style={styles}>
       <Toolbar
         style={{ margin: "10px 10px" }}
         activeTool={activeTool}
         setTool={setTool}
-      />
+      >
+        {addEpochIsActive &&
+          tagColors.map(({ tag, color }, i) => (
+            <Button
+              key={`${i}-${tagColors.length}`}
+              onClick={() => setTag(tag)}
+              bsStyle={`${tag === activeTag ? "" : "default"}`}
+            >
+              <div
+                style={{
+                  backgroundColor: color,
+                  width: "15px",
+                  height: "15px"
+                }}
+              />
+            </Button>
+          ))}
+      </Toolbar>
       <div
         style={{
           margin: `30px ${margin.right}px 30px ${panelWidth + margin.left}px`
@@ -73,13 +105,14 @@ const EEG = ({
             justifyContent: "space-around"
           }}
         >
-          {seriesCollection.map(series => (
-            <div style={{ minWidth: `${panelWidth}px` }}>
+          {seriesCollection.map((series, i) => (
+            <div
+              key={`${i}-${series.length}`}
+              style={{ minWidth: `${panelWidth}px` }}
+            >
               <EditableText
                 value={series.name}
-                onSubmit={value => {
-                  console.log({ name: value });
-                }}
+                onSubmit={name => setName({ seriesId: series.id, name })}
               />
               <MultiplierPanel
                 multiplierLabel="zoom"
@@ -104,6 +137,8 @@ const EEG = ({
                   seriesCollection={seriesCollection}
                   margin={margin}
                   activeTool={activeTool}
+                  activeTag={activeTag}
+                  tagColors={tagColors}
                   {...seriesStackProps}
                 />
               )}
