@@ -38,7 +38,6 @@ class NewSeriesModal extends Component {
     } else {
       x = xCol || [];
     }
-    console.log(xType, x);
     const makeTrace = (x, y) => ({ x, y });
     const makeEpoch = (tag, domain) => ({ tag, domain });
     const traces = ys.map(y => R.zipWith(makeTrace, x, y));
@@ -48,7 +47,6 @@ class NewSeriesModal extends Component {
   }
   render() {
     const { show, seriesData } = this.state;
-    console.log(seriesData);
     const setSeriesData = settingData =>
       this.setState({ seriesData: R.merge(seriesData, settingData) });
 

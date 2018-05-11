@@ -5,6 +5,9 @@ import { scaleOrdinal, scaleLinear } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { ParentSize } from "@vx/vx";
 import { Range } from "rc-slider";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import Clickable from "./Clickable";
 import NewSeriesModal from "./new-series/NewSeriesModal";
 import LineSeriesStack from "./LineSeriesStack";
 import MultiplierPanel from "./MultiplierPanel";
@@ -20,8 +23,6 @@ const tagColors = R.reverse(R.range(0, 10)).map((c, i) => {
     color: palette(c)
   };
 });
-
-const RemoveSeries = () => null;
 
 const styles = {
   fontFamily: "sans-serif",
@@ -121,6 +122,9 @@ const EEG = ({
               key={`${i}-${series.length}`}
               style={{ minWidth: `${panelWidth}px` }}
             >
+              <Clickable onClick={() => removeSeries({ seriesId: series.id })}>
+                <FontAwesomeIcon icon={faTimes} />
+              </Clickable>
               <EditableText
                 value={series.name}
                 onSubmit={name => setName({ seriesId: series.id, name })}
@@ -131,7 +135,6 @@ const EEG = ({
                 factor={zoomFactor}
                 onChange={zoom => setZoom({ seriesId: series.id, zoom })}
               />
-              <RemoveSeries removeSeries={removeSeries} />
             </div>
           ))}
         </div>

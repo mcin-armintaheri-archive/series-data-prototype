@@ -8,6 +8,7 @@ import { reducer, cycle } from "./state";
 import { setDomain } from "./state/parameters/domain";
 import { createSeries } from "./state/models/series";
 import { connectSeriesStore } from "./state";
+import seriesCollectionExtent from "./util/extent.js";
 import EEG from "./components/EEG";
 
 export default class App extends Component {
@@ -29,22 +30,25 @@ export default class App extends Component {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.readAsText(file);
-        reader.onLoad = readEvent => {
+        reader.addEventListener("load", readEvent => {
           if (readEvent.target.readyState !== 2) {
             return;
           }
           if (readEvent.target.error) {
             alert("Error reading file.");
           }
-          const parsed = JSON.parse(event.target.result);
+          const parsed = JSON.parse(readEvent.target.result);
           if (!(parsed instanceof Array)) {
             alert("Your file is not formatted properly.");
           }
+          var domain = seriesCollectionExtent(parsed);
+          this.store.dispatch(setDomain(domain));
           parsed.forEach(series => {
             this.store.dispatch(createSeries(series));
           });
-        };
+        });
       });
+      input.click();
     };
     const cycleMiddleware = createCycleMiddleware();
     const { makeStateDriver, makeActionDriver } = cycleMiddleware;
