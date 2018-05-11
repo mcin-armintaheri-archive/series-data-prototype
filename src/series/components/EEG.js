@@ -5,6 +5,7 @@ import { scaleOrdinal, scaleLinear } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { ParentSize } from "@vx/vx";
 import { Range } from "rc-slider";
+import NewSeriesModal from "./new-series/NewSeriesModal";
 import LineSeriesStack from "./LineSeriesStack";
 import MultiplierPanel from "./MultiplierPanel";
 import EditableText from "./EditableText";
@@ -19,6 +20,8 @@ const tagColors = R.reverse(R.range(0, 10)).map((c, i) => {
     color: palette(c)
   };
 });
+
+const RemoveSeries = () => null;
 
 const styles = {
   fontFamily: "sans-serif",
@@ -43,11 +46,17 @@ const EEG = ({
     bottom: 30
   },
   panelWidth = 150,
+  newSeriesOpened,
+  setNewSeriesOpened,
   activeTool = Tools.NONE,
   setTool,
   activeTag = 0,
   setTag,
   setName,
+  createSeries,
+  removeSeries,
+  onSave,
+  onLoad,
   ...seriesStackProps
 }) => {
   const totalDomainExtent = extent(seriesCollection, x);
@@ -58,6 +67,8 @@ const EEG = ({
         style={{ margin: "10px 10px" }}
         activeTool={activeTool}
         setTool={setTool}
+        onSave={() => onSave(seriesCollection)}
+        onLoad={() => onLoad(createSeries)}
       >
         {addEpochIsActive &&
           tagColors.map(({ tag, color }, i) => (
@@ -120,6 +131,7 @@ const EEG = ({
                 factor={zoomFactor}
                 onChange={zoom => setZoom({ seriesId: series.id, zoom })}
               />
+              <RemoveSeries removeSeries={removeSeries} />
             </div>
           ))}
         </div>
@@ -146,6 +158,7 @@ const EEG = ({
           </div>
         </div>
       </div>
+      <NewSeriesModal createSeries={createSeries} />
     </div>
   );
 };

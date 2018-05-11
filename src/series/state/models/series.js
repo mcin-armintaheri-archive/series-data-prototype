@@ -5,6 +5,9 @@ import { attr, Model } from "redux-orm";
 export const CREATE_SERIES = "CREATE_SERIES";
 export const createSeries = createAction(CREATE_SERIES);
 
+export const REMOVE_SERIES = "REMOVE_SERIES";
+export const removeSeries = createAction(REMOVE_SERIES);
+
 export const SET_EPOCH_DOMAIN = "SET_EPOCH_DOMAIN";
 export const setEpochDomain = createAction(SET_EPOCH_DOMAIN);
 
@@ -30,8 +33,16 @@ export class Series extends Model {
     switch (type) {
       case CREATE_SERIES: {
         Series.create(
-          Object.assign({ zoom: 1.0, traces: [], epochs: [] }, payload)
+          Object.assign(
+            { name: "", zoom: 1.0, traces: [], epochs: [] },
+            payload
+          )
         );
+        return;
+      }
+      case REMOVE_SERIES: {
+        const { seriesId } = payload;
+        Series.withId(seriesId).delete();
         return;
       }
       case CREATE_EPOCH: {

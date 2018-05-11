@@ -94,17 +94,21 @@ const SeriesStackAxes = ({
     const tooltipTop = yScale.invert(position.y % rowHeight);
     const bisect = bisector(x).left;
     const tooltipData = seriesCollection.map(series =>
-      series.traces.map(trace => {
-        const i = bisect(trace, tooltipLeft);
-        const p1 = trace[i];
-        const p0 = trace[i - 1] || p1;
-        const xp = tooltipLeft;
-        const x0 = x(p0);
-        const x1 = x(p1);
-        const t = Math.abs((xp - x0) / (x1 - x0));
-        const yp = y(p0) * (1 - t) + y(p1) * t;
-        return { x: xp, y: yp };
-      })
+      series.traces
+        .map(trace => {
+          const i = bisect(trace, tooltipLeft);
+          const ic0 = Math.min(Math.max(i - 1, 0), trace.length - 1);
+          const ic1 = Math.min(Math.max(i, 0), trace.length - 1);
+          const p0 = trace[ic0];
+          const p1 = trace[ic1];
+          const xp = tooltipLeft;
+          const x0 = x(p0);
+          const x1 = x(p1);
+          const t = Math.abs((xp - x0) / (x1 - x0));
+          const yp = y(p0) * (1 - t) + y(p1) * t;
+          return { x: xp, y: yp };
+        })
+        .filter(x => !!x)
     );
     return { tooltipData, tooltipLeft, tooltipTop };
   };
@@ -159,7 +163,12 @@ const SeriesStackAxes = ({
       createEpoch({ seriesId: series.id, domain, tag: activeTag, x: x1 });
     };
     return (
-      <Group top={rowHeight * i} height={rowHeight} width={plotWidth}>
+      <Group
+        key={`${i}-${seriesCollection.length}`}
+        top={rowHeight * i}
+        height={rowHeight}
+        width={plotWidth}
+      >
         <rect
           onMouseDown={whenAdding(onMouseDown)}
           height={rowHeight}
@@ -174,9 +183,15 @@ const SeriesStackAxes = ({
     const whenEditing = R.when(() => activeTool === Tools.EDIT_EPOCH);
     const whenRemoving = R.when(() => activeTool === Tools.REMOVE_EPOCH);
     return (
-      <Group top={rowHeight * i} height={rowHeight} width={plotWidth}>
+      <Group
+        key={`${i}-${seriesCollection.length}`}
+        top={rowHeight * i}
+        height={rowHeight}
+        width={plotWidth}
+      >
         {series.epochs.map(({ domain, tag }, j) => (
           <Epoch
+            key={`${j}-${series.epochs.length}`}
             epochTags={epochTags}
             domain={domain}
             tag={tag}
@@ -257,12 +272,18 @@ const SeriesStackAxes = ({
   );
   const renderTracesTooltip = (traces, i) => (
     <SeriesToolTip
+      key={`${i}-${traces.length}`}
       top={rowHeight * (i + 0.5)}
       left={xScale(tooltipLeft) + innerGroupProps.left + 12}
     >
       <ul style={{ listStyleType: "none", margin: "0", padding: "0" }}>
         {traces.map(
-          (trace, j) => trace && <li>{tooltipFormatY(trace.y, j)}</li>
+          (trace, j) =>
+            trace && (
+              <li key={`${j}-${traces.length}`}>
+                {tooltipFormatY(trace.y, j)}
+              </li>
+            )
         )}
       </ul>
     </SeriesToolTip>

@@ -1,7 +1,6 @@
 import * as R from "ramda";
 import { createAction } from "redux-actions";
-import { CREATE_EPOCH, setEpochDomain } from "../models/series";
-import { seriesSelector } from "../models/orm";
+import { setEpochDomain } from "../models/series";
 
 export const INIT_EDIT_EPOCH_START = "INIT_EDIT_EPOCH_START";
 export const initEditEpochStart = createAction(INIT_EDIT_EPOCH_START);

@@ -7,8 +7,9 @@ const Toolbar = ({ activeTool, setTool, onSave, onLoad, style, children }) => {
     <div style={{ display: "flex", justifyContent: "space-between", ...style }}>
       <div>
         <ButtonGroup>
-          {Object.keys(Tools).map(tool => (
+          {Object.keys(Tools).map((tool, i) => (
             <Button
+              key={`${i}-${Object.keys(Tools).length}`}
               bsStyle={`${tool === activeTool ? "primary" : "default"}`}
               onClick={() => setTool(tool)}
             >
@@ -21,17 +22,13 @@ const Toolbar = ({ activeTool, setTool, onSave, onLoad, style, children }) => {
       <ButtonGroup>
         <Button
           disabled={!onSave}
-          onClick={event =>
-            event.buttons === 1 && event.button === 1 && !!onSave && onSave()
-          }
+          onClick={event => event.button === 0 && !!onSave && onSave()}
         >
           Save
         </Button>
         <Button
           disabled={!onLoad}
-          onClick={event =>
-            event.buttons === 1 && event.button === 1 && !!onLoad && onLoad()
-          }
+          onClick={event => event.button === 0 && !!onLoad && onLoad()}
         >
           Load
         </Button>

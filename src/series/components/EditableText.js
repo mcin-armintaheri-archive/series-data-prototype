@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import {} from "react-bootstrap";
-
-const Clickable = ({ children, ...props }) => (
-  <span style={{ margin: "5px 5px", cursor: "pointer" }} {...props}>
-    {children}
-  </span>
-);
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faCheck from "@fortawesome/fontawesome-free-solid/faCheck";
+import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import faEdit from "@fortawesome/fontawesome-free-solid/faEdit";
+import Clickable from "./Clickable";
 
 class EditableText extends Component {
   constructor(props) {
@@ -47,14 +45,14 @@ class EditableText extends Component {
                   this.setState({ editing: false });
                 }}
               >
-                S
+                <FontAwesomeIcon icon={faCheck} />
               </Clickable>
               <Clickable
                 onClick={() =>
                   this.setState({ inputValue: value, editing: false })
                 }
               >
-                X
+                <FontAwesomeIcon icon={faTimes} />
               </Clickable>
             </div>
           </div>
@@ -70,7 +68,7 @@ class EditableText extends Component {
               {value}
             </div>
             <Clickable onClick={() => this.setState({ editing: true })}>
-              E
+              <FontAwesomeIcon icon={faEdit} />
             </Clickable>
           </div>
         )}

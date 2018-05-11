@@ -9,6 +9,8 @@ import { toolsReducer, setTool } from "./parameters/tools";
 import { tagsReducer, setTag } from "./parameters/tags";
 import { domainReducer, setDomain } from "./parameters/domain";
 import {
+  createSeries,
+  removeSeries,
   createEpoch,
   removeEpoch,
   setEpochDomain,
@@ -53,6 +55,8 @@ const mapDispatchToProps = dispatch => ({
   initEditEpochEnd: R.compose(dispatch, initEditEpochEnd),
   continueEditEpoch: R.compose(dispatch, continueEditEpoch),
   stopEditEpoch: R.compose(dispatch, stopEditEpoch),
+  createSeries: R.compose(dispatch, createSeries),
+  removeSeries: R.compose(dispatch, removeSeries),
   createEpoch: R.compose(dispatch, createEpoch),
   removeEpoch: R.compose(dispatch, removeEpoch),
   setTool: R.compose(dispatch, setTool),
