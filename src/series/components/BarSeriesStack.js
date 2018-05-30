@@ -6,22 +6,23 @@ import SeriesStackAxes from "./SeriesStackAxes";
 
 const palette = scaleOrdinal(schemeCategory10);
 
-const BarSeries = ({ data, xScale, yScale, traceIndex }) => {
+const BarSeries = ({ data, xScale, yScale, traceIndex, height }) => {
   const x = d => d.x;
   const y = d => d.y;
   const xRange = xScale.range();
-  const bandWidth = 0.95 * Math.abs(xRange[1] - xRange[0]) / data.length;
+  const filtered = data.filter(d => x(d) >= xRange[0] && x(d) < xRange[1]);
+  const bandWidth = 0.95 * Math.abs(xRange[1] - xRange[0]) / filtered.length;
   const range = yScale.range();
-  const mid = (range[0] + range[1]) / 2;
-  return data.map((d, i) => {
+  const mid = (range[0] + range[1]) / 2 - height * traceIndex;
+  return filtered.map((d, i) => {
     const yVal = y(d);
     return (
       <Bar
         key={i}
-        x={x(d) * 3}
+        x={xScale(x(d))}
         y={mid}
         width={bandWidth}
-        height={yVal * 10}
+        height={yScale(yVal)}
         fill={palette(traceIndex)}
       />
     );

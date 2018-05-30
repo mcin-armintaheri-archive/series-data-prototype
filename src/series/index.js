@@ -61,11 +61,11 @@ export default class App extends Component {
     run(cycle, { ACTION: makeActionDriver(), STATE: makeStateDriver() });
   }
   render() {
-    const ConnectedEEG = connectSeriesStore(EEG);
-    const { x, y, onSave, onLoad } = this.props;
+    const { x, y, onSave, onLoad, component } = this.props;
+    const Connected = connectSeriesStore(component || EEG);
     return (
       <Provider store={this.store}>
-        <ConnectedEEG
+        <Connected
           x={x}
           y={y}
           onSave={onSave || this.onSave}
