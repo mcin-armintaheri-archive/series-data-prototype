@@ -1,5 +1,5 @@
 import React from "react";
-import { Bar } from "@vx/vx";
+import { Line, Point } from "@vx/vx";
 import { scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import SeriesStackAxes from "./SeriesStackAxes";
@@ -14,19 +14,15 @@ const BarSeries = ({ data, xScale, yScale, traceIndex, height }) => {
   const bandWidth = 0.95 * Math.abs(xRange[1] - xRange[0]) / filtered.length;
   const range = yScale.range();
   const mid = (range[0] + range[1]) / 2 - height * traceIndex;
-  return filtered.map((d, i) => {
-    const yVal = y(d);
-    return (
-      <Bar
-        key={i}
-        x={xScale(x(d))}
-        y={mid}
-        width={bandWidth}
-        height={yScale(yVal)}
-        fill={palette(traceIndex)}
-      />
-    );
-  });
+  return filtered.map((d, i) => (
+    <Line
+      key={i}
+      from={new Point({ x: xScale(x(d)), y: mid })}
+      to={new Point({ x: xScale(x(d)), y: yScale(y(d)) })}
+      stroke={palette(traceIndex)}
+      strokeWidth={bandWidth / 2}
+    />
+  ));
 };
 
 const LineSeriesStack = ({ renderSeries, ...seriesStackAxesProps }) => {
