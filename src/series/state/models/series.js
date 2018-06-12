@@ -26,6 +26,9 @@ export const setZoom = createAction(SET_ZOOM);
 export const SET_NAME = "SET_NAME";
 export const setName = createAction(SET_NAME);
 
+export const SET_SERIES_METADATA = "SET_SERIES_METADATA";
+export const setSeriesMetadata = createAction(SET_SERIES_METADATA);
+
 export class Series extends Model {
   static reducer(action, Series) {
     const { type, payload } = action;
@@ -98,6 +101,11 @@ export class Series extends Model {
         Series.withId(seriesId).update({ zoom });
         return;
       }
+      case SET_SERIES_METADATA: {
+        const { seriesId, metadata } = payload;
+        Series.withId(seriesId).update({ metadata });
+        return;
+      }
       default:
         return;
     }
@@ -111,5 +119,6 @@ Series.fields = {
   name: attr(),
   traces: attr(),
   epochs: attr(),
-  zoom: attr()
+  zoom: attr(),
+  metadata: attr()
 };

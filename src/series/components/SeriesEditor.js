@@ -31,6 +31,7 @@ const styles = {
 };
 
 const SeriesEditor = ({
+  subjectMetadata = {},
   seriesCollection = [],
   domain,
   zoomFactor = 1.1,
@@ -70,7 +71,7 @@ const SeriesEditor = ({
         style={{ margin: "10px 10px" }}
         activeTool={activeTool}
         setTool={setTool}
-        onSave={() => onSave(seriesCollection)}
+        onSave={() => onSave({ subjectMetadata, seriesCollection })}
         onLoad={() => onLoad(createSeries)}
       >
         {addEpochIsActive &&

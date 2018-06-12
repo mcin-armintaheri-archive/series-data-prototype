@@ -9,13 +9,18 @@ import { toolsReducer, setTool } from "./parameters/tools";
 import { tagsReducer, setTag } from "./parameters/tags";
 import { domainReducer, setDomain } from "./parameters/domain";
 import {
+  subjectMetadataReducer,
+  setSubjectMetadata
+} from "./parameters/subject-metadata";
+import {
   createSeries,
   removeSeries,
   createEpoch,
   removeEpoch,
   setEpochDomain,
   setZoom,
-  setName
+  setName,
+  setSeriesMetadata
 } from "./models/series";
 import { seriesSelector } from "./models/orm";
 
@@ -33,6 +38,7 @@ import orm from "./models/orm";
 export const cycle = combineCycles(editEpochCycle);
 
 export const reducer = combineReducers({
+  subjectMetadata: subjectMetadataReducer,
   domain: domainReducer,
   activeTool: toolsReducer,
   activeTag: tagsReducer,
@@ -40,6 +46,7 @@ export const reducer = combineReducers({
 });
 
 const mapStateToProps = state => ({
+  subjectMetadata: state.subjectMetadata,
   domain: state.domain,
   activeTool: state.activeTool,
   activeTag: state.activeTag,
@@ -49,6 +56,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setZoom: R.compose(dispatch, setZoom),
   setName: R.compose(dispatch, setName),
+  setSeriesMetadata: R.compose(dispatch, setSeriesMetadata),
   onDomainChange: R.compose(dispatch, setDomain),
   onEpochChange: R.compose(dispatch, setEpochDomain),
   initEditEpochStart: R.compose(dispatch, initEditEpochStart),
@@ -60,7 +68,8 @@ const mapDispatchToProps = dispatch => ({
   createEpoch: R.compose(dispatch, createEpoch),
   removeEpoch: R.compose(dispatch, removeEpoch),
   setTool: R.compose(dispatch, setTool),
-  setTag: R.compose(dispatch, setTag)
+  setTag: R.compose(dispatch, setTag),
+  setSubjectMetadata: R.compose(dispatch, setSubjectMetadata)
 });
 
 export const connectSeriesStore = connect(mapStateToProps, mapDispatchToProps);
