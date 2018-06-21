@@ -10,6 +10,9 @@ class MetaDatePicker extends Component{
            <DatePicker
                 selected={this.state.selectDate}
                 onChange={this.handleChange}
+                showTimeSelect
+                dateFormat="LLL"
+
             />
           );
     }
