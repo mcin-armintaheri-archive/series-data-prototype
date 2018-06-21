@@ -6,7 +6,7 @@ class Dropdown extends Component{
         return (
             <div>
             <DropdownButton
-              title={this.state.buttonTitle}
+              title={this.state.selectedItem}
               id={`dropdown-basic`}
               onSelect={this.handleChange}
             >
@@ -19,12 +19,12 @@ class Dropdown extends Component{
     }
     constructor(props){
         super(props);
-        this.state={buttonTitle:'Select'};
+        this.state={selectedItem: props.defaultItem};
         this.handleChange=this.handleChange.bind(this);
 
     }
     handleChange (val){
-        this.setState({buttonTitle: val});
+        this.setState({selectedItem: val});
     }
    
 }

@@ -8,7 +8,7 @@ class TextField extends Component{
                    
                 <FormControl
                     type="text"
-                    value={this.state.inpuVal}
+                    value={this.state.inputVal}
                     placeholder="Enter Value"
                     onChange={this.handleUpdate}
                 />
@@ -18,7 +18,7 @@ class TextField extends Component{
     }
     constructor(props){
         super(props);
-        this.state= {inputVal: ''};
+        this.state= {inputVal: props.existingVal};
         this.handleUpdate=this.handleUpdate.bind(this);
     }
 
