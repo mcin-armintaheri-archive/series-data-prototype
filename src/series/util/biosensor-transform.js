@@ -1,5 +1,23 @@
+const R = require("ramda");
+
 function fromBiosensorFormat(json) {
-  return json;
+  const { Data } = json;
+  const { header, Raw_Signal } = Data;
+  const {
+    epoch_information,
+    recording_information,
+    device_information
+  } = header;
+  const {
+    name,
+    type,
+    company,
+    SIN,
+    SignalObject_num,
+    ...signals
+  } = device_information;
+  const signalKeys = R.keys(signals);
+  return signalKeys;
 }
 
 function toBiosensorFormat(json) {

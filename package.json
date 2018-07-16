@@ -36,7 +36,8 @@
     "redux-logger": "3.0.6",
     "redux-orm": "0.9.4",
     "resize-observer-polyfill": "1.5.0",
-    "simplify-js": "1.2.3"
+    "simplify-js": "1.2.3",
+    "sweetalert2": "^7.25.5"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
@@ -45,7 +46,7 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
-    "gh-pages": "^1.1.0",
+    "gh-pages": "^1.2.0",
     "prettier": "^1.12.1"
   },
   "scripts": {

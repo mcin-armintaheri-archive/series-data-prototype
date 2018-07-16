@@ -13,6 +13,10 @@ import {
   setSubjectMetadata
 } from "./parameters/subject-metadata";
 import {
+  metadataSchemaReducer,
+  setMetadataSchema
+} from "./parameters/metadata-schema";
+import {
   createSeries,
   removeSeries,
   createEpoch,
@@ -39,6 +43,7 @@ export const cycle = combineCycles(editEpochCycle);
 
 export const reducer = combineReducers({
   subjectMetadata: subjectMetadataReducer,
+  metadataSchema: metadataSchemaReducer,
   domain: domainReducer,
   activeTool: toolsReducer,
   activeTag: tagsReducer,
@@ -46,6 +51,7 @@ export const reducer = combineReducers({
 });
 
 const mapStateToProps = state => ({
+  metadataSchema: state.metadataSchema,
   subjectMetadata: state.subjectMetadata,
   domain: state.domain,
   activeTool: state.activeTool,
@@ -69,7 +75,8 @@ const mapDispatchToProps = dispatch => ({
   removeEpoch: R.compose(dispatch, removeEpoch),
   setTool: R.compose(dispatch, setTool),
   setTag: R.compose(dispatch, setTag),
-  setSubjectMetadata: R.compose(dispatch, setSubjectMetadata)
+  setSubjectMetadata: R.compose(dispatch, setSubjectMetadata),
+  setMetadataSchema: R.compose(dispatch, setMetadataSchema)
 });
 
 export const connectSeriesStore = connect(mapStateToProps, mapDispatchToProps);
