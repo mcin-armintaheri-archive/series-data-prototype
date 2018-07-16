@@ -1,29 +1,18 @@
-import React, {Component} from 'react';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
+import React, { Component } from "react";
+import DatePicker from "react-datepicker";
 
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-class MetaDatePicker extends Component{
-    render(){
-        return (
-           <DatePicker
-                selected={this.state.selectDate}
-                onChange={this.handleChange}
-                showTimeSelect
-                dateFormat="LLL"
-
-            />
-          );
-    }
-    constructor(props){
-        super(props);
-        this.state={selectDate: moment() };
-        this.handleChange=this.handleChange.bind(this);
-    }
-    handleChange(date){
-        this.setState({selectDate:date})
-    }
-   
+class MetaDatePicker extends Component {
+  render() {
+    return (
+      <DatePicker
+        selected={this.props.selectDate}
+        onChange={this.props.onChange}
+        showTimeSelect
+        dateFormat="LLL"
+      />
+    );
+  }
 }
 export default MetaDatePicker;

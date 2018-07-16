@@ -23,7 +23,7 @@ class EditableText extends Component {
             style={{
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between"
+              justifyContent: "space-right"
             }}
           >
             <input
@@ -36,7 +36,7 @@ class EditableText extends Component {
               style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-between"
+                justifyContent: "space-right"
               }}
             >
               <Clickable
@@ -61,7 +61,7 @@ class EditableText extends Component {
             style={{
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between"
+              justifyContent: "space-right"
             }}
           >
             <div style={{ marginBottom: "auto", marginTop: "auto" }}>
