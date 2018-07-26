@@ -132,7 +132,7 @@ const Main = ({
     </Grid>
   );
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/series-data-prototype">
       <Switch>
         <Route exact path="/" component={EEGRoute} />
         <Route exact path="/working" component={Working} />
