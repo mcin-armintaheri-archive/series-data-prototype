@@ -6,6 +6,7 @@ import { createCycleMiddleware } from "redux-cycles";
 import { run } from "@cycle/most-run";
 import { reducer, cycle } from "./state";
 import { setDomain } from "./state/parameters/domain";
+import { setMetadataSchema } from "./state/parameters/metadata-schema";
 import { createSeries } from "./state/models/series";
 import { connectSeriesStore } from "./state";
 import seriesCollectionExtent from "./util/extent.js";
@@ -55,8 +56,15 @@ export default class App extends Component {
     const logger = createLogger();
     this.store = createStore(reducer, applyMiddleware(cycleMiddleware, logger));
     this.store.dispatch(setDomain(props.initialDomain));
+    const { initialSubjectSchema, initialSeriesSchema } = props;
     props.initialSeriesCollection.forEach(series => {
       this.store.dispatch(createSeries(series));
+      this.store.dispatch(
+        setMetadataSchema({
+          subjectSchema: initialSubjectSchema || {},
+          seriesSchema: initialSeriesSchema || {}
+        })
+      );
     });
     run(cycle, { ACTION: makeActionDriver(), STATE: makeStateDriver() });
   }

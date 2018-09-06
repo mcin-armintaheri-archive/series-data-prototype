@@ -7,7 +7,7 @@ class MetaDatePicker extends Component {
   render() {
     return (
       <DatePicker
-        selected={this.props.selectDate}
+        selected={this.props.selectedDate}
         onChange={this.props.onChange}
         showTimeSelect
         dateFormat="LLL"

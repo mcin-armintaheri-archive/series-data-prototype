@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import * as R from "ramda";
-import { Button, Row, Col } from "react-bootstrap";
+import { ControlLabel, Button, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import SplitView from "./SplitView";
 import SchemaView from "./SchemaView";
@@ -9,12 +9,22 @@ import MetadataEditForm from "./MetadataEditForm";
 const getSchemaPath = path =>
   path && R.append("schema", R.intersperse("schema", path));
 
-const CategoryForm = ({ activePath, schema, setMetadata }) => {
+const CategoryForm = ({ activePath, schema, metadata, setMetadata }) => {
   const activeSchema = activePath && R.path(getSchemaPath(activePath), schema);
-  const activeMetadata = null;
-  const setMetadataValue = null;
+  const activeMetadata = metadata && activePath && R.path(activePath, metadata);
+  const setMetadataValue =
+    metadata &&
+    activePath &&
+    (value => setMetadata(R.assocPath(activePath, value, metadata)));
+  const pathTitle = R.join(" > ", activePath || []);
   return activeSchema ? (
     <Row>
+      <Row>
+        <Col xs={12}>
+          <ControlLabel>{pathTitle}</ControlLabel>
+          <hr />
+        </Col>
+      </Row>
       <Col xs={12}>
         <MetadataEditForm
           dataComponents={[activeSchema]}
@@ -29,7 +39,7 @@ const CategoryForm = ({ activePath, schema, setMetadata }) => {
 export default class MetadataEntry extends Component {
   constructor(props) {
     super(props);
-    this.state = { metadata: props.metadata, activePath: null };
+    this.state = { editing: false, metadata: props.metadata, activePath: null };
     this.setSchemaPath = this.setSchemaPath.bind(this);
     this.setMetadata = this.setMetadata.bind(this);
     this.saveMetadata = this.saveMetadata.bind(this);
@@ -39,10 +49,10 @@ export default class MetadataEntry extends Component {
     this.setState({ activePath });
   }
   componentWillReceiveProps({ metadata }) {
-    this.setMetadata(metadata);
+    this.setState({ metadata, editing: false });
   }
   setMetadata(metadata) {
-    this.setState({ metadata });
+    this.setState({ metadata, editing: true });
   }
   saveMetadata() {
     const { saveMetadata } = this.props;
@@ -61,14 +71,14 @@ export default class MetadataEntry extends Component {
       res =>
         res.value &&
         this.setState({
-          metadata: this.props.metadata
+          metadata: this.props.metadata,
+          editing: false
         })
     );
-    this.setState({ metadata: this.props.metadata });
   }
   render() {
     const { title, schema } = this.props;
-    const { activePath } = this.state;
+    const { activePath, metadata, editing } = this.state;
     return (
       <Row>
         <Row>
@@ -83,6 +93,7 @@ export default class MetadataEntry extends Component {
               <CategoryForm
                 activePath={activePath}
                 schema={schema}
+                metadata={metadata}
                 setMetadata={this.setMetadata}
               />
             </SplitView>
@@ -91,7 +102,12 @@ export default class MetadataEntry extends Component {
         <Row>
           <Col xs={12}>
             <Col xs={1}>
-              <Button onClick={this.saveMetadata}>Save</Button>
+              <Button
+                bsStyle={editing ? "primary" : "default"}
+                onClick={this.saveMetadata}
+              >
+                Save
+              </Button>
             </Col>
             <Col xs={1}>
               <Button onClick={this.cancelsaveMetadata}>Cancel</Button>

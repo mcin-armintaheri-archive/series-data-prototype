@@ -51,6 +51,7 @@ export const reducer = combineReducers({
 });
 
 const mapStateToProps = state => ({
+  metadataSchema: state.metadataSchema,
   subjectMetadata: state.subjectMetadata,
   domain: state.domain,
   activeTool: state.activeTool,

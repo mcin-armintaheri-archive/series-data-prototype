@@ -1,7 +1,10 @@
 import React from "react";
 import * as R from "ramda";
 import { DropdownButton, MenuItem, Row, Col } from "react-bootstrap";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
 import EditableText from "./EditableText.js";
+import Clickable from "./Clickable";
 
 const Branch = ({ path = [], schema, setSchema, onClick }) => {
   const keys = R.keys(schema);
@@ -20,6 +23,13 @@ const Branch = ({ path = [], schema, setSchema, onClick }) => {
   return (
     <ul>
       {keys.map((innerLabel, i) => {
+        const deleteKey =
+          setSchema &&
+          (delKey => {
+            const clone = R.clone(schema);
+            delete clone[innerLabel];
+            setSchema(clone, true);
+          });
         const setSchemaKey =
           setSchema &&
           (newKey => {
@@ -37,6 +47,7 @@ const Branch = ({ path = [], schema, setSchema, onClick }) => {
             schema={schema[innerLabel].schema}
             setSchema={setInnerSchema(innerLabel)}
             setSchemaKey={setSchemaKey}
+            deleteKey={deleteKey}
           />
         ) : (
           <LeafField
@@ -47,6 +58,7 @@ const Branch = ({ path = [], schema, setSchema, onClick }) => {
             schema={schema[innerLabel].schema}
             setSchema={setInnerSchema(innerLabel)}
             setSchemaKey={setSchemaKey}
+            deleteKey={deleteKey}
           />
         );
       })}
@@ -58,6 +70,7 @@ const NestedField = ({
   path = [],
   label,
   setSchemaKey,
+  deleteKey,
   schema,
   setSchema,
   onClick
@@ -75,7 +88,25 @@ const NestedField = ({
         }}
       >
         {editable ? (
-          <EditableText value={label} onSubmit={setSchemaKey} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-right",
+              alignItems: "center"
+            }}
+          >
+            <EditableText value={label} onSubmit={setSchemaKey} />
+            <Clickable>
+              <FontAwesomeIcon
+                icon={faTrash}
+                onClick={e => {
+                  e.stopPropagation();
+                  deleteKey(label);
+                }}
+              />
+            </Clickable>
+          </div>
         ) : (
           label
         )}
@@ -93,12 +124,30 @@ const NestedField = ({
   );
 };
 
-const LeafField = ({ path = [], label, setSchemaKey, onClick }) => {
+const LeafField = ({ path = [], label, setSchemaKey, deleteKey, onClick }) => {
   const editable = setSchemaKey instanceof Function;
   return (
     <li style={{ cursor: "pointer" }} onClick={() => onClick(path)}>
       {editable ? (
-        <EditableText value={label} onSubmit={setSchemaKey} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-right",
+            alignItems: "center"
+          }}
+        >
+          <EditableText value={label} onSubmit={setSchemaKey} />
+          <Clickable>
+            <FontAwesomeIcon
+              icon={faTrash}
+              onClick={e => {
+                e.stopPropagation();
+                deleteKey(label);
+              }}
+            />
+          </Clickable>
+        </div>
       ) : (
         label
       )}

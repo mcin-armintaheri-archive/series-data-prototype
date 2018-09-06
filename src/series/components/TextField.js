@@ -14,7 +14,7 @@ class TextField extends Component {
       <div className="TextField">
         <FormControl
           type="text"
-          value={this.props.inputVal}
+          value={this.props.inputVal || ""}
           placeholder="Enter Value"
           onChange={this.handleUpdate}
         />

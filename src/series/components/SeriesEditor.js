@@ -1,14 +1,21 @@
 import * as R from "ramda";
 import React from "react";
-import { Button } from "react-bootstrap";
+import { compose, withState } from "recompose";
+import { ButtonGroup, Button } from "react-bootstrap";
 import { scaleOrdinal, scaleLinear } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { ParentSize } from "@vx/vx";
 import { Range } from "rc-slider";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import faInfoCircle from "@fortawesome/fontawesome-free-solid/faInfoCircle";
 import Clickable from "./Clickable";
 import NewSeriesModal from "./new-series/NewSeriesModal";
+import {
+  MetaSchemaModal,
+  SubjectMetaModal,
+  SeriesMetaModal
+} from "./MetadataModals";
 import LineSeriesStack from "./LineSeriesStack";
 import MultiplierPanel from "./MultiplierPanel";
 import EditableText from "./EditableText";
@@ -33,6 +40,10 @@ const styles = {
 const SeriesEditor = ({
   subjectMetadata = {},
   seriesCollection = [],
+  metadataSchema = { subjectSchema: {}, seriesSchema: {} },
+  setMetadataSchema,
+  setSubjectMetadata,
+  setSeriesMetadata,
   domain,
   zoomFactor = 1.1,
   onDomainChange,
@@ -60,13 +71,32 @@ const SeriesEditor = ({
   onSave,
   onLoad,
   component = LineSeriesStack,
+  showSchemaConfig = false,
+  showSeriesMeta = false,
+  showSubjectMeta = false,
+  setShowSchemaConfig,
+  setShowSeriesMeta,
+  setShowSubjectMeta,
   ...seriesStackProps
 }) => {
   const totalDomainExtent = extent(seriesCollection, x);
   const addEpochIsActive = activeTool === Tools.ADD_EPOCH;
   const Component = component;
+  const schemaButtons = (
+    <div style={{ margin: "10px" }}>
+      <ButtonGroup>
+        <Button onClick={() => setShowSchemaConfig(true)}>
+          Configure Metadata Schema
+        </Button>
+        <Button onClick={() => setShowSubjectMeta(true)}>
+          Subject Metadata
+        </Button>
+      </ButtonGroup>
+    </div>
+  );
   return (
     <div style={styles}>
+      {schemaButtons}
       <Toolbar
         style={{ margin: "10px 10px" }}
         activeTool={activeTool}
@@ -125,9 +155,16 @@ const SeriesEditor = ({
               key={`${i}-${series.length}`}
               style={{ minWidth: `${panelWidth}px` }}
             >
-              <Clickable onClick={() => removeSeries({ seriesId: series.id })}>
-                <FontAwesomeIcon icon={faTimes} />
-              </Clickable>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <Clickable
+                  onClick={() => removeSeries({ seriesId: series.id })}
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </Clickable>
+                <Clickable onClick={() => setShowSeriesMeta(series.id)}>
+                  <FontAwesomeIcon icon={faInfoCircle} />
+                </Clickable>
+              </div>
               <EditableText
                 value={series.name}
                 onSubmit={name => setName({ seriesId: series.id, name })}
@@ -165,8 +202,34 @@ const SeriesEditor = ({
         </div>
       </div>
       <NewSeriesModal createSeries={createSeries} />
+      <MetaSchemaModal
+        show={showSchemaConfig}
+        setShow={setShowSchemaConfig}
+        metadataSchema={metadataSchema}
+        setMetadataSchema={setMetadataSchema}
+      />
+      <SubjectMetaModal
+        show={showSubjectMeta}
+        setShow={setShowSubjectMeta}
+        subjectSchema={metadataSchema.subjectSchema}
+        subjectMetadata={subjectMetadata}
+        setSubjectMetadata={setSubjectMetadata}
+      />
+      <SeriesMetaModal
+        seriesId={showSeriesMeta}
+        setShow={setShowSeriesMeta}
+        seriesSchema={metadataSchema.seriesSchema}
+        seriesCollection={seriesCollection}
+        setSeriesMetadata={setSeriesMetadata}
+      />
     </div>
   );
 };
 
-export default SeriesEditor;
+const withModals = compose(
+  withState("showSchemaConfig", "setShowSchemaConfig", false),
+  withState("showSubjectMeta", "setShowSubjectMeta", false),
+  withState("showSeriesMeta", "setShowSeriesMeta", null)
+);
+
+export default withModals(SeriesEditor);

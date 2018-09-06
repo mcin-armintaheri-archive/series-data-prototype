@@ -8,8 +8,8 @@ const SplitView = ({ children }) => {
   const [left, right] = React.Children.toArray(children);
   return (
     <Row>
-      <Col xs={4}>{left}</Col>
-      <Col xs={8}>{right}</Col>
+      <Col xs={6}>{left}</Col>
+      <Col xs={6}>{right}</Col>
     </Row>
   );
 };
