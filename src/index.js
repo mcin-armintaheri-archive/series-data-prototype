@@ -8,6 +8,7 @@ import Omics from "./series/components/Omics";
 import extent from "./series/util/extent";
 import { makeSeriesCollection } from "./series/mockdata";
 import SeriesApp from "./series";
+import { RawDataTraceToColumnMapTest as Working } from "./series/components/RawDataTraceToColumnMap";
 import "rc-slider/assets/index.css";
 import "./css/bootstrap.min.css";
 
@@ -20,76 +21,6 @@ export { makeSeriesCollection } from "./series/mockdata";
 
 export const seriesCollectionExtent = seriesCollection =>
   extent(seriesCollection, d => d.x);
-
-class Working extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      subjectSchema: {
-        potato: {
-          schema: {
-            labelName: "Potato",
-            description: ""
-          }
-        }
-      },
-      seriesSchema: {
-        tomato: {
-          labelName: "Tomato",
-          description: ""
-        }
-      },
-      subjectMetadata: {},
-      seriesMetadata: {}
-    };
-    this.setSubjectSchema = this.setSubjectSchema.bind(this);
-    this.setSeriesSchema = this.setSeriesSchema.bind(this);
-  }
-  setSubjectSchema(subjectSchema) {
-    this.setState({ subjectSchema });
-  }
-  setSeriesSchema(seriesSchema) {
-    this.setState({ seriesSchema });
-  }
-  render() {
-    return (
-      <Grid>
-        <Row>
-          <Col xs={12}>
-            <SchemaConfig
-              subjectSchema={this.state.subjectSchema}
-              seriesSchema={this.state.seriesSchema}
-              saveSubjectSchema={this.setSubjectSchema}
-              saveSeriesSchema={this.setSeriesSchema}
-            />
-          </Col>
-        </Row>
-        <hr />
-        <Row>
-          <Col xs={12}>
-            <MetadataEntry
-              title="Subject Metadata Entry"
-              schema={this.state.subjectSchema}
-              metadata={this.state.subjectMetadata}
-              saveMetadata={this.setSubjectMetadata}
-            />
-          </Col>
-        </Row>
-        <hr />
-        <Row>
-          <Col xs={12}>
-            <MetadataEntry
-              title="Series Metadata Entry"
-              schema={this.state.seriesSchema}
-              metadata={this.state.seriesMetadata}
-              saveMetadata={this.setSeriesMetadata}
-            />
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
-}
 
 const Main = ({
   domain,
