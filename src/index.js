@@ -8,7 +8,7 @@ import Omics from "./series/components/Omics";
 import extent from "./series/util/extent";
 import { makeSeriesCollection } from "./series/mockdata";
 import SeriesApp from "./series";
-import { RawDataTraceToColumnMapTest as Working } from "./series/components/RawDataTraceToColumnMap";
+import { BatchImportTest as Working } from "./series/components/BatchImport";
 import "rc-slider/assets/index.css";
 import "./css/bootstrap.min.css";
 
