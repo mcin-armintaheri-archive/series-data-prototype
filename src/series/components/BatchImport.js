@@ -42,7 +42,6 @@ export default class BatchImport extends Component {
         }
       });
     };
-    console.log(batches);
     return (
       <div>
         <h4> {heading} </h4>

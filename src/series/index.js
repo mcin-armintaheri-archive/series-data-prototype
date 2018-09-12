@@ -57,14 +57,14 @@ export default class App extends Component {
     this.store = createStore(reducer, applyMiddleware(cycleMiddleware, logger));
     this.store.dispatch(setDomain(props.initialDomain));
     const { initialSubjectSchema, initialSeriesSchema } = props;
+    this.store.dispatch(
+      setMetadataSchema({
+        subjectSchema: initialSubjectSchema || {},
+        seriesSchema: initialSeriesSchema || {}
+      })
+    );
     props.initialSeriesCollection.forEach(series => {
       this.store.dispatch(createSeries(series));
-      this.store.dispatch(
-        setMetadataSchema({
-          subjectSchema: initialSubjectSchema || {},
-          seriesSchema: initialSeriesSchema || {}
-        })
-      );
     });
     run(cycle, { ACTION: makeActionDriver(), STATE: makeStateDriver() });
   }
