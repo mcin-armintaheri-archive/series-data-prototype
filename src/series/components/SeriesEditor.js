@@ -10,12 +10,12 @@ import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
 import faInfoCircle from "@fortawesome/fontawesome-free-solid/faInfoCircle";
 import Clickable from "./Clickable";
-import NewSeriesModal from "./new-series/NewSeriesModal";
 import {
   MetaSchemaModal,
   SubjectMetaModal,
   SeriesMetaModal
 } from "./MetadataModals";
+import { BatchImportModalTest } from "./BatchImportModal";
 import LineSeriesStack from "./LineSeriesStack";
 import MultiplierPanel from "./MultiplierPanel";
 import EditableText from "./EditableText";
@@ -59,8 +59,6 @@ const SeriesEditor = ({
     bottom: 30
   },
   panelWidth = 150,
-  newSeriesOpened,
-  setNewSeriesOpened,
   activeTool = Tools.NONE,
   setTool,
   activeTag = 0,
@@ -72,11 +70,13 @@ const SeriesEditor = ({
   onLoad,
   component = LineSeriesStack,
   showSchemaConfig = false,
-  showSeriesMeta = false,
-  showSubjectMeta = false,
   setShowSchemaConfig,
+  showSeriesMeta = false,
   setShowSeriesMeta,
+  showSubjectMeta = false,
   setShowSubjectMeta,
+  showBatchImport = false,
+  setShowBatchImport,
   ...seriesStackProps
 }) => {
   const totalDomainExtent = extent(seriesCollection, x);
@@ -85,6 +85,9 @@ const SeriesEditor = ({
   const schemaButtons = (
     <div style={{ margin: "10px" }}>
       <ButtonGroup>
+        <Button onClick={() => setShowBatchImport(true)}>
+          Import CSV Batches
+        </Button>
         <Button onClick={() => setShowSchemaConfig(true)}>
           Configure Metadata Schema
         </Button>
@@ -181,27 +184,30 @@ const SeriesEditor = ({
         <div style={{ width: "100%", height: "100%" }}>
           <div style={{ display: "flex", width: "100%", height: "100%" }}>
             <ParentSize>
-              {({ width, height }) => (
-                <Component
-                  x={x}
-                  y={y}
-                  width={width}
-                  height={height}
-                  xScale={scaleLinear().domain(domain)}
-                  yScale={scaleLinear().domain(yScale)}
-                  seriesCollection={seriesCollection}
-                  margin={margin}
-                  activeTool={activeTool}
-                  activeTag={activeTag}
-                  tagColors={tagColors}
-                  {...seriesStackProps}
-                />
-              )}
+              {({ width, height }) =>
+                seriesCollection.length < 1 ? (
+                  <h4>There are no series to show.</h4>
+                ) : (
+                  <Component
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    xScale={scaleLinear().domain(domain)}
+                    yScale={scaleLinear().domain(yScale)}
+                    seriesCollection={seriesCollection}
+                    margin={margin}
+                    activeTool={activeTool}
+                    activeTag={activeTag}
+                    tagColors={tagColors}
+                    {...seriesStackProps}
+                  />
+                )
+              }
             </ParentSize>
           </div>
         </div>
       </div>
-      <NewSeriesModal createSeries={createSeries} />
       <MetaSchemaModal
         show={showSchemaConfig}
         setShow={setShowSchemaConfig}
@@ -222,6 +228,11 @@ const SeriesEditor = ({
         seriesCollection={seriesCollection}
         setSeriesMetadata={setSeriesMetadata}
       />
+      <BatchImportModalTest
+        show={showBatchImport}
+        setShow={setShowBatchImport}
+        createSeries={createSeries}
+      />
     </div>
   );
 };
@@ -229,7 +240,8 @@ const SeriesEditor = ({
 const withModals = compose(
   withState("showSchemaConfig", "setShowSchemaConfig", false),
   withState("showSubjectMeta", "setShowSubjectMeta", false),
-  withState("showSeriesMeta", "setShowSeriesMeta", null)
+  withState("showSeriesMeta", "setShowSeriesMeta", null),
+  withState("showBatchImport", "setShowBatchImport", false)
 );
 
 export default withModals(SeriesEditor);

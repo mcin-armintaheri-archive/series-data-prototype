@@ -8,7 +8,7 @@ import Omics from "./series/components/Omics";
 import extent from "./series/util/extent";
 import { makeSeriesCollection } from "./series/mockdata";
 import SeriesApp from "./series";
-import { BatchImportTest as Working } from "./series/components/BatchImport";
+import { BatchImportModalTest as Working } from "./series/components/BatchImportModal";
 import "rc-slider/assets/index.css";
 import "./css/bootstrap.min.css";
 
@@ -25,6 +25,8 @@ export const seriesCollectionExtent = seriesCollection =>
 const Main = ({
   domain,
   seriesCollection = [],
+  subjectSchema,
+  seriesSchema,
   x = d => d.x,
   y = d => d.y
 }) => {
@@ -32,6 +34,8 @@ const Main = ({
     <SeriesApp
       initialDomain={domain}
       initialSeriesCollection={seriesCollection}
+      initialSubjectSchema={subjectSchema}
+      initialSeriesSchema={seriesSchema}
       x={x}
       y={y}
     />
@@ -47,6 +51,8 @@ const Main = ({
         component={Omics}
         initialDomain={slicedExtent}
         initialSeriesCollection={slicedSeries}
+        initialSubjectSchema={subjectSchema}
+        initialSeriesSchema={seriesSchema}
         x={x}
         y={y}
       />
@@ -69,7 +75,7 @@ const Main = ({
     </Grid>
   );
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/series-data-prototype">
       <Switch>
         <Route exact path="/" component={EEGRoute} />
         <Route exact path="/working" component={Working} />
@@ -80,10 +86,24 @@ const Main = ({
 
 export const mountSeriesApp = (
   root,
-  { domain, seriesCollection, x = d => d.x, y = d => d.y }
+  {
+    domain,
+    seriesCollection,
+    x = d => d.x,
+    y = d => d.y,
+    subjectSchema = {},
+    seriesSchema = {}
+  }
 ) =>
   render(
-    <Main domain={domain} seriesCollection={seriesCollection} x={x} y={y} />,
+    <Main
+      domain={domain}
+      seriesCollection={seriesCollection}
+      x={x}
+      y={y}
+      subjectSchema={subjectSchema}
+      seriesSchema={seriesSchema}
+    />,
     root
   );
 
@@ -94,8 +114,97 @@ window.seriesCollectionExtent = seriesCollectionExtent;
 // <script>
 var mockData = window.makeSeriesCollection();
 var domain = window.seriesCollectionExtent(mockData);
+var subjectSchema = {
+  recording_information: {
+    nested: true,
+    schema: {
+      participant_id: {
+        schema: {
+          labelName: "Participant ID",
+          inputType: "TextField"
+        }
+      },
+      instituition: {
+        schema: {
+          labelName: "Institution",
+          inputType: "TextField"
+        }
+      },
+      date: {
+        schema: {
+          labelName: "Date",
+          inputType: "DatePicker"
+        }
+      },
+      time_description: {
+        schema: {
+          labelName: "Time Description",
+          inputType: "Dropdown",
+          options: ["Eastern Time (US & Canada)", "Central Time (US & Canada)"]
+        }
+      },
+      visit_num: {
+        schema: {
+          labelName: "Visit Number",
+          inputType: "TextField"
+        }
+      }
+    }
+  },
+  device_information: {
+    nested: true,
+    schema: {
+      name: {
+        schema: {
+          labelName: "Device Name",
+          inputType: "TextField"
+        }
+      },
+      type: {
+        schema: {
+          labelName: "Type",
+          inputType: "TextField"
+        }
+      },
+      company: {
+        schema: {
+          labelName: "Company",
+          inputType: "TextField"
+        }
+      },
+      SIN: {
+        schema: {
+          labelName: "Social Insurance Number",
+          inputType: "TextField"
+        }
+      }
+    }
+  }
+};
+var seriesSchema = {
+  name: {
+    schema: {
+      labelName: "Signal Name",
+      inputType: "TextField"
+    }
+  },
+  sensor: {
+    schema: {
+      labelName: "Sensor",
+      inputType: "TextField"
+    }
+  },
+  sensor_location_on_body: {
+    schema: {
+      labelName: "Sensor Location On Body",
+      inputType: "TextField"
+    }
+  }
+};
 window.mountSeriesApp(document.getElementById("root"), {
   domain: domain,
-  seriesCollection: mockData
+  seriesCollection: [],
+  subjectSchema,
+  seriesSchema
 });
 // </script>
