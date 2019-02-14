@@ -85,14 +85,12 @@ const SeriesEditor = ({
   const schemaButtons = (
     <div style={{ margin: "10px" }}>
       <ButtonGroup>
-        <Button onClick={() => setShowBatchImport(true)}>
-          Import CSV Batches
-        </Button>
+        <Button onClick={() => setShowBatchImport(true)}>Add a Series</Button>
         <Button onClick={() => setShowSchemaConfig(true)}>
           Configure Metadata Schema
         </Button>
         <Button onClick={() => setShowSubjectMeta(true)}>
-          Subject Metadata
+          Configure Subject Metadata
         </Button>
       </ButtonGroup>
     </div>
@@ -184,8 +182,8 @@ const SeriesEditor = ({
         <div style={{ width: "100%", height: "100%" }}>
           <div style={{ display: "flex", width: "100%", height: "100%" }}>
             <ParentSize>
-              {({ width, height }) =>
-                seriesCollection.length < 1 ? (
+              {({ width, height }) => {
+                return seriesCollection.length === 0 ? (
                   <h4>There are no series to show.</h4>
                 ) : (
                   <Component
@@ -202,8 +200,8 @@ const SeriesEditor = ({
                     tagColors={tagColors}
                     {...seriesStackProps}
                   />
-                )
-              }
+                );
+              }}
             </ParentSize>
           </div>
         </div>

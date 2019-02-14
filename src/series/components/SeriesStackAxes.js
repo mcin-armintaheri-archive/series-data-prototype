@@ -75,9 +75,6 @@ const SeriesStackAxes = ({
   tickFormatX = x => x,
   tickFormatY = y => y
 }) => {
-  if (seriesCollection.length === 1) {
-    return null;
-  }
   const numRows = seriesCollection.length;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
@@ -290,7 +287,7 @@ const SeriesStackAxes = ({
   );
   return (
     <div
-      style={{ position: "relative" }}
+      style={{ position: "relative", width, height }}
       onMouseUp={event => {
         event.stopPropagation();
         stopEditEpoch();

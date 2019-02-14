@@ -36,7 +36,7 @@ const Range = ({ range, setRange }) => (
       style={{ maxWidth: "75px" }}
       type="number"
       value={range[1]}
-      onChange={e => setRange([Number(e.target.value), range[1]])}
+      onChange={e => setRange([range[0], Number(e.target.value)])}
     />
   </div>
 );
@@ -58,7 +58,7 @@ const RawDataTraceToColumnMap = ({
       R.assocPath(
         ["xAxis", "start"],
         start,
-        R.assocPath(["xAxis", "start"], end, columnMap)
+        R.assocPath(["xAxis", "end"], end, columnMap)
       )
     );
   const setXAxisType = type =>

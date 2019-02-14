@@ -159,7 +159,7 @@ export default class SchemaConfig extends Component {
     const { saveSubjectSchema, saveSeriesSchema } = this.props;
     const { subjectSchema, seriesSchema, editing } = this.state;
     return (
-      <Tabs defaultActiveKey={1} id="schema-config-tabs">
+      <Tabs defaultActiveKey={1} id="schema-config-tabs" animation={false}>
         <Tab eventKey={1} title="Subject Metadata">
           <SchemaConfigTabState
             label={"Subject Metadata Configuration"}

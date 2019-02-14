@@ -5,7 +5,7 @@ import * as R from "ramda";
 
 export default class BatchImport extends Component {
   render() {
-    const { heading, batches, setBatches } = this.props;
+    const { heading, batches } = this.props;
     const addTableToBatch = (index, table) => {
       const { batches, setBatches } = this.props;
       const innerArrayLens = R.lensIndex(index);
@@ -45,23 +45,12 @@ export default class BatchImport extends Component {
     return (
       <div>
         <h4> {heading} </h4>
-        <Row>
-          {" "}
-          <Col xs={12}>
-            <Button
-              bsSize="small"
-              onClick={() => setBatches(R.append([], batches))}
-            >
-              + Add Batch
-            </Button>{" "}
-          </Col>
-        </Row>
         <br />
         {batches.map((batch, index) => (
           <div key={`${index}-${batches.length}`}>
             <Row>
               <Col xs={9}>
-                <label>Batch {index + 1} :</label>
+                <label>Tables:</label>
               </Col>
               <Col xs={3}>
                 <Button bsSize="small" onClick={() => askForFile(index)}>

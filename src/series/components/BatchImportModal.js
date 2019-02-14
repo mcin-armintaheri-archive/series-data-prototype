@@ -1,16 +1,7 @@
 import * as R from "ramda";
 import React, { Component } from "react";
 import { compose, withState } from "recompose";
-import {
-  DropdownButton,
-  MenuItem,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Tabs,
-  Tab
-} from "react-bootstrap";
+import { Row, Col, Button, Modal, Tabs, Tab } from "react-bootstrap";
 import BatchImport from "./BatchImport";
 import SplitView from "./SplitView";
 import Tables from "./Tables";
@@ -66,52 +57,16 @@ const TransposedBatches = withActiveIndex(
       }}
       id="transposed-signals-tabs"
     >
-      <Tab eventKey={0} title="Table Groups">
-        <ol>
-          {batches.map((batch, i) => (
-            <li
-              key={`${i}-${batches.length}`}
-              onClick={() => {
-                setActiveTab(1);
-                setActiveIndex(i);
-              }}
-            >
-              <a style={{ cursor: "pointer" }}>Signal - {i + 1}:</a>
-              <ul>
-                {batch.map((table, j) => (
-                  <li key={`${j}-${batch.length}`}>{table.name}</li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
-      </Tab>
-      <Tab eventKey={1} title="View Tables">
-        {batches.length > 0 && (
-          <DropdownButton
-            title={`Signal - ${activeIndex + 1}`}
-            id="active-batch"
-          >
-            {batches.map((_, i) => (
-              <MenuItem
-                key={`${i}-${batches.length}`}
-                eventKey={i}
-                onSelect={() => setActiveIndex(i)}
-              >
-                Signal - {i + 1}
-              </MenuItem>
-            ))}
-          </DropdownButton>
-        )}
+      <Tab eventKey={0} title="View Tables">
         <br />
         <br />
-        <Tables tables={batches[activeIndex]} />
+        <Tables tables={batches[0]} />
       </Tab>
     </Tabs>
   )
 );
 
-const transpose = batches => R.transpose(batches).map(R.reject(R.isNil));
+const transpose = batches => batches.map(R.reject(R.isNil));
 
 const BatchUploadTab = ({ batches, setBatches }) => {
   return (
@@ -181,31 +136,30 @@ const ColumnSelectTab = withColumnSelectState(
 const BatchImportModal = ({
   show = false,
   setShow,
-  batches = [],
+  batches = [[]],
   setBatches,
   columnMap = INITIAL_COLUMN_MAP,
   setColumnMap,
   runBatchImport
 }) => {
-  const transposedBatches = R.transpose(batches);
   return (
     <Modal bsSize="large" show={show} onHide={() => setShow(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>Import CSV Batches</Modal.Title>
+        <Modal.Title>Import CSV Tables</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Tabs defaultActiveKey={0} id="batch-import-tabs">
+        <Tabs defaultActiveKey={0} id="import-tabs" animation={false}>
           <Tab eventKey={0} title="Upload CSV tables">
             <BatchUploadTab batches={batches} setBatches={setBatches} />
           </Tab>
           <Tab
             eventKey={1}
-            title="Configure Raw Data Template"
+            title="Assign Raw Data"
             disabled={!(batches && batches[0])}
           >
-            {transposedBatches && transposedBatches[0] ? (
+            {batches && batches[0] ? (
               <ColumnSelectTab
-                batch={transposedBatches[0]}
+                batch={batches.reduce((a, b) => a.concat(b), [])}
                 columnMap={columnMap}
                 setColumnMap={setColumnMap}
               />
@@ -213,15 +167,20 @@ const BatchImportModal = ({
               <h4>There are no loaded tables to work with.</h4>
             )}
           </Tab>
-          <Tab eventKey={3} title="Configure Metadata Template" disabled />
         </Tabs>
       </Modal.Body>
       <Modal.Footer>
         <Button
           bsStyle="primary"
-          onClick={() => runBatchImport(transposedBatches, columnMap)}
+          onClick={() => {
+            try {
+              runBatchImport(batches, columnMap);
+            } catch (e) {
+              alert(e);
+            }
+          }}
         >
-          Run Batch Import
+          Add Series
         </Button>
         <Button onClick={() => setShow(false)}>Cancel</Button>
       </Modal.Footer>
@@ -235,7 +194,7 @@ export class BatchImportModalTest extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      batches: [],
+      batches: [[]],
       columnMap: INITIAL_COLUMN_MAP
     };
   }
@@ -246,12 +205,19 @@ export class BatchImportModalTest extends Component {
     const setColumnMap = setState("columnMap");
     const runBatchImport = (transposedBatches, columnMap) => {
       const getColumn = (columnSelector, batch) => {
+        if (!columnSelector) {
+          return null;
+        }
+
         const { pageIndex, column } = columnSelector;
         return batch[pageIndex].rows.map(row => Number(row[column]));
       };
       transposedBatches.forEach((batch, i) => {
         const traces = columnMap.traces.map(columnSelector => {
           const colData = getColumn(columnSelector, batch);
+          if (!colData) {
+            throw new Error("Please set one or more traces to a table column.");
+          }
           let xData;
           switch (columnMap.xAxis.type) {
             case X_TYPES.RANGE: {
@@ -275,10 +241,16 @@ export class BatchImportModalTest extends Component {
         });
         const epochs = R.zipWith(
           (start, end) => ({ tag: 0, domain: [start, end] }),
-          getColumn(columnMap.epochs.start, batch),
-          getColumn(columnMap.epochs.end, batch)
+          getColumn(columnMap.epochs.start, batch) || [],
+          getColumn(columnMap.epochs.end, batch) || []
         );
-        createSeries({ name: `Signal - ${i}`, traces, epochs, zoom: 1 });
+        if (traces.length === 0) {
+          throw new Error(
+            "Please create and assign at least once trace to a table column."
+          );
+        }
+        createSeries({ name: `New Signal`, traces, epochs, zoom: 1 });
+        setState("columnMap")(INITIAL_COLUMN_MAP);
       });
       setShow(false);
     };
